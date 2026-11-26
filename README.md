@@ -9,8 +9,8 @@ Le chercheur est souvent confronté à des encodages numériques, des formats h�
 
 Ce dépôt est un exercice qui poursuit un double objectif :
 
-* **Sur le plan médical :** traduire des variables brutes (TA, FC maximale à l'effort, statut coronarien) en variables cliniques lisibles, encadrées par des règles de plausibilité physiologique.
-* **Sur le plan data et pédagogique :** concevoir un pipeline modulaire qui montre comment passer d'un fichier CSV brut à une donnée exploitable, sans effet « boîte noire ».
+* **Sur le plan médical :** traduire des variables brutes (TA, FC maximale à l'effort, statut coronarien) en variables cliniques lisibles
+* **Sur le plan data et pédagogique :** concevoir un pipeline modulaire qui montre comment passer d'un fichier CSV brut à une donnée exploitable, sans effet black box.
 
 > NB : données publiques uniquement, aucune donnée patient réelle.
 

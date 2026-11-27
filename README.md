@@ -35,7 +35,17 @@ Une étape de nettoyage comble l'écart entre un fichier d'archive brut et une d
 4. **Typer en entier** `ca` : on respecte sa nature discrète malgré les cases vides.
 5. **Garder les NULL** de `ca` (4 valeurs manquantes) : on laisse les valeurs vides plutôt que d'inventer une valeur à la place du clinicien.
 6. **Ajouter un `id` de ligne** : repère unique par ligne (Cleveland ne fournit pas d'identifiant patient).
-7. **Ajouter des tests automatiques** : identifiant, valeurs de sexe, et fourchettes larges de pression artérielle (50-300 mmHg) et de fréquence cardiaque (40-250 bpm) pour repérer les anomalies grossières.
+7. **Ajouter des tests automatiques** : identifiant, valeurs de sexe, et fourchettes larges de pression artérielle (50-300 mmHg) et de fréquence cardiaque (40-250 bpm) pour repérer les anomalies grossières
+
+Donc j'ai commencé par stocker une table source brut en données Cloud BigQuery via dbt seed (seeds/heart_disease.csv).Cela permet de garder une base de référence reproductible.
+Ensuite, j’ai créé un modèle SQL dans dbt (models/cardio/stg_heart_disease.sql) qui s’exécute directement dans BigQuery pour nettoyer et transformer cette table brute en une table propre 
+Enfin, j’ai ajouté des tests automatiques dans dbt (schema.yml et tests/bp_hr_plausible.sql) exécutés sur BigQuery à savoir:
+-Vérification que l’id est unique et non nul
+-Vérification que le sexe vaut bien M ou F
+-Vérification que la pression artérielle (50–300 mmHg)
+-Vérification quela fréquence cardiaque (40–250 bpm) 
+
+.
 
 **Périmètre** : pour ce premier exercice, **7 variables sur 14** sont conservées (`age`, `sex`, `trestbps`, `chol`, `thalach`, `ca`, `num`), plus l'identifiant. Les 7 autres (`cp`, `fbs`, `restecg`, `exang`, `oldpeak`, `slope`, `thal`) sont écartées par choix pédagogique, pas pour une raison clinique.
 
@@ -52,6 +62,27 @@ Chaque transformation est isolée, documentée et vérifiée automatiquement :
 [ seeds/heart_disease.csv ] ──▶ [ staging: stg_heart_disease ] ──▶ [ Tests qualité et physiologie ]
         (Donnée brute)              (Nettoyage et encodage lisible)          (Contrôle avant analyse / ML)
 ```
+## Aperçu : avant / après
+
+**Avant** : `seeds/heart_disease.csv` (abréviations, sexe en 1/0, cible de 0 à 4, valeur manquante vide)
+
+| id  | age | sex | trestbps | chol | thalach | ca      | num |
+|-----|-----|-----|----------|------|---------|---------|-----|
+| 1   | 63  | 1   | 145      | 233  | 150     | 0       | 0   |
+| 2   | 67  | 1   | 160      | 286  | 108     | 3       | 2   |
+| 3   | 67  | 1   | 120      | 229  | 129     | 2       | 1   |
+| 4   | 37  | 1   | 130      | 250  | 187     | 0       | 0   |
+| 288 | 58  | 1   | 125      | 220  | 144     | (vide)  | 0   |
+
+**Après** : `stg_heart_disease` (noms explicites avec unités, sexe décodé, cible binaire, NULL conservé)
+
+| patient_id | age  | sex | resting_bp_mmhg | cholesterol_mg_dl | max_heart_rate_bpm | nb_vessels_colored | has_heart_disease |
+|------------|------|-----|-----------------|-------------------|--------------------|--------------------|-------------------|
+| 1          | 63.0 | M   | 145.0           | 233.0             | 150.0              | 0                  | false             |
+| 2          | 67.0 | M   | 160.0           | 286.0             | 108.0              | 3                  | true              |
+| 3          | 67.0 | M   | 120.0           | 229.0             | 129.0              | 2                  | true              |
+| 4          | 37.0 | M   | 130.0           | 250.0             | 187.0              | 0                  | false             |
+| 288        | 58.0 | M   | 125.0           | 220.0             | 144.0              | NULL               | false             |
 
 ---
 

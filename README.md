@@ -16,7 +16,7 @@ Ce dépôt est un exercice qui poursuit un double objectif :
 
 ---
 
-## Méthode et architecture
+## Méthode 
 
 À partir d'une archive de référence de données cliniques brutes (UCI Machine Learning Repository, hébergé par l'Université de Californie à Irvine), ce pipeline traite la base Cleveland de 303 patients, 14 variables retenues parmi les 76 attributs d'origine.
 
@@ -112,7 +112,7 @@ dbt build --select stg_heart_disease
 
 ---
 
-## Source des données
+## Source 
 
 Janosi, A., Steinbrunn, W., Pfisterer, M., Detrano, R. (1989). *Heart Disease*. UCI Machine Learning Repository. Licence CC BY 4.0.
 

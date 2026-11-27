@@ -18,7 +18,7 @@ Ce dépôt est un exercice qui poursuit un double objectif :
 
 ## Méthode et architecture
 
-À partir d'une archive de référence de données cliniques brutes (UCI Machine Learning Repository, hébergé par l'Université de Californie à Irvine), ce pipeline traite la base **Cleveland** : 303 patients, 14 variables retenues parmi les 76 attributs d'origine.
+À partir d'une archive de référence de données cliniques brutes (UCI Machine Learning Repository, hébergé par l'Université de Californie à Irvine), ce pipeline traite la base Cleveland de 303 patients, 14 variables retenues parmi les 76 attributs d'origine.
 
 Cette base présente cependant plusieurs obstacles :
 
@@ -37,7 +37,8 @@ Une étape de nettoyage comble l'écart entre un fichier d'archive brut et une d
 6. **Ajouter un `id` de ligne** : repère unique par ligne (Cleveland ne fournit pas d'identifiant patient).
 7. **Ajouter des tests automatiques** : identifiant, valeurs de sexe, et fourchettes larges de pression artérielle (50-300 mmHg) et de fréquence cardiaque (40-250 bpm) pour repérer les anomalies grossières
 
-Donc j'ai commencé par stocker une table source brut en données Cloud BigQuery via dbt seed (seeds/heart_disease.csv).Cela permet de garder une base de référence reproductible.
+Donc j'ai commencé par stocker une table source brut en données Cloud BigQuery via dbt seed (seeds/heart_disease.csv).
+Cela permet de garder une base de référence reproductible.
 Ensuite, j’ai créé un modèle SQL dans dbt (models/cardio/stg_heart_disease.sql) qui s’exécute directement dans BigQuery pour nettoyer et transformer cette table brute en une table propre 
 Enfin, j’ai ajouté des tests automatiques dans dbt (schema.yml et tests/bp_hr_plausible.sql) exécutés sur BigQuery à savoir:
 -Vérification que l’id est unique et non nul
